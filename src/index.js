@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import PropTypes from 'prop-types';
 // import expect from 'expect';
 // import deepFreeze from 'deep-freeze-strict'
 
@@ -150,7 +152,7 @@ const Link = ({
 
 class FliterLink extends Component {
     componentDidMount() {
-        const { store } = this.props;
+        const { store } = this.context;
         this.unsubscribe = store.subscribe(() => 
             this.forceUpdate()
             );
@@ -162,7 +164,7 @@ class FliterLink extends Component {
 
     render() {
         const props = this.props;
-        const { store } = props;
+        const { store } = this.context;
         const state = store.getState();
 
         return (
@@ -182,28 +184,28 @@ class FliterLink extends Component {
             );
     }
 }
+FliterLink.contextTypes = {
+    store: PropTypes.object
+};
 
-const Footer = ({store}) => (
+const Footer = () => (
     <p>
         Show:
         {' '}
         <FliterLink
             filter='SHOW_ALL'
-            store={store}
         >
             ALL
         </FliterLink>
         {' '}
         <FliterLink
             filter='SHOW_ACTIVE'
-            store={store}
         >
             ACTIVE
         </FliterLink>
         {' '}
         <FliterLink
             filter='SHOW_COMPLETED'
-            store={store}
         >
             COMPLETED
         </FliterLink>
@@ -242,7 +244,7 @@ const TodoList = ({
     </ul>
 );
 
-const AddTodo = ({store}) => {
+const AddTodo = (props, { store }) => {
     let input;
     return (
         <div>
@@ -261,7 +263,11 @@ const AddTodo = ({store}) => {
                 </button>
         </div>
         );
-}
+};
+AddTodo.contextTypes = {
+    store: PropTypes.object
+};
+
 
 const getVisibleTodos = (
     todos,
@@ -285,7 +291,7 @@ const getVisibleTodos = (
 
 class VisibleTodoList extends Component {
     componentDidMount() {
-        const { store } = this.props;
+        const { store } = this.context;
         this.unsubscribe = store.subscribe(() => 
             this.forceUpdate()
             );
@@ -296,7 +302,7 @@ class VisibleTodoList extends Component {
     }
 
     render() {
-        const props = this.props;
+        const props = this.context;
         const { store } = props;
         const state = store.getState();
 
@@ -318,18 +324,27 @@ class VisibleTodoList extends Component {
         );
     }
 }
+VisibleTodoList.contextTypes = {
+    store: PropTypes.object
+};
 
 let nextTodoId = 0;
-const TodoApp = ({store}) =>
+const TodoApp = () =>
     (
         <div>
-            <AddTodo store={store}/>
-            <VisibleTodoList store={store}/>
-            <Footer store={store}/>
+            <AddTodo />
+            <VisibleTodoList />
+            <Footer />
         </div>
     );
 
+Provider.propTypes = {
+    store: PropTypes.object
+};
+
     ReactDOM.render(
-            <TodoApp store={createStore(todoApp)} />,
+        <Provider store={createStore(todoApp)}>
+            <TodoApp />
+        </Provider>,
             document.getElementById('root')
         );

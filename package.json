@@ -6,6 +6,7 @@
     "bootstrap": "^3.3.7",
     "deep-freeze-strict": "^1.1.1",
     "expect": "^1.20.2",
+    "prop-types": "^15.5.9",
     "react": "^15.5.4",
     "react-bootstrap": "^0.30.9",
     "react-dom": "^15.5.4",
